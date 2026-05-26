@@ -33,6 +33,18 @@ func (r *Repo) GetUserByEmail(ctx context.Context, email string) (User, error) {
 	return u, err
 }
 
+func (r *Repo) GetUserByID(ctx context.Context, id int64) (User, error) {
+	var u User
+	err := r.db.QueryRowContext(ctx, `
+		SELECT id, email, password_hash, created_at
+		FROM users WHERE id = $1`, id).
+		Scan(&u.ID, &u.Email, &u.PasswordHash, &u.CreatedAt)
+	if errors.Is(err, sql.ErrNoRows) {
+		return User{}, ErrNotFound
+	}
+	return u, err
+}
+
 func (r *Repo) CreateUser(ctx context.Context, email, hash string) (User, error) {
 	var u User
 	err := r.db.QueryRowContext(ctx, `

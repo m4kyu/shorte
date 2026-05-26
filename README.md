@@ -56,9 +56,13 @@ Use the values from `.env.example` for local environment variables.
 
 ## Endpoints
 
+- `GET /`
+- `GET /login`
+- `GET /register`
 - `POST /api/v1/auth/register`
 - `POST /api/v1/auth/login`
 - `POST /api/v1/auth/logout`
+- `GET /api/v1/auth/me`
 - `POST /api/v1/links`
 - `GET /api/v1/links`
 - `GET /api/v1/links/{code}`
