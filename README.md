@@ -1,38 +1,58 @@
 # shorte
 
-Fast URL shortener service with:
-- Go API (`net/http`)
-- Redis for redirect cache and click queue
-- PostgreSQL for durable links and aggregated stats
-- Minimal WebUI served by API
+`shorte` is a URL shortener project built mainly as a playground to experiment with vibe coding.
+
+The goal is not just to ship a working shortener, but to use a small, concrete service to test how far fast iterative coding can go with:
+- Go backend code with minimal dependencies
+- Redis for hot-path caching and queued click events
+- PostgreSQL for durable storage
+- A simple WebUI for basic link management
+
+## What it does
+
+- Shortens long URLs into short codes
+- Redirects fast through Redis first, then PostgreSQL on cache miss
+- Lets authenticated users create and manage links
+- Collects basic click stats
+- Ships with a minimal WebUI
 
 ## Requirements
 
-- Go `>= 1.25` for local builds/runs (because `github.com/jackc/pgx/v5@v5.9.2` requires it).
+- Go `>= 1.25` for local builds and runs
+- Docker and Docker Compose for the full stack
 
-## Run
+## Run Everything
 
-### Full stack with Docker Compose
+Start the full stack with:
 
-1. Start all services:
-   - `docker compose up --build`
-2. Open WebUI:
-   - `http://localhost:8080`
+```bash
+docker compose up --build
+```
 
-Notes:
-- PostgreSQL schema is auto-initialized from `migrations/001_init.sql` on first DB boot.
-- If `pgdata` volume already exists and you need a fresh DB init:
-  - `docker compose down -v`
-  - `docker compose up --build`
+Then open:
 
-### Local Go run (without API/worker containers)
+- `http://localhost:8080`
 
-1. Start dependencies only:
-   - `docker compose up -d postgres redis`
-2. Apply SQL migration from `migrations/001_init.sql` to your `shorte` database.
-3. Export env vars from `.env.example`.
-4. Start API: `go run ./cmd/api`
-5. Start worker: `go run ./cmd/worker`
+PostgreSQL schema is initialized automatically on first boot from `migrations/001_init.sql`.
+
+If you need a clean reset:
+
+```bash
+docker compose down -v
+docker compose up --build
+```
+
+## Local Development
+
+If you want to run the Go binaries locally instead of in containers:
+
+```bash
+docker compose up -d postgres redis
+go run ./cmd/api
+go run ./cmd/worker
+```
+
+Use the values from `.env.example` for local environment variables.
 
 ## Endpoints
 
