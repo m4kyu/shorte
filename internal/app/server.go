@@ -443,22 +443,113 @@ const dashboardHTML = `{{define "dashboard"}}<!doctype html>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>shorte - dashboard</title>
   <style>
-    body { font-family: sans-serif; max-width: 900px; margin: 24px auto; padding: 0 16px; background: #f8fafc; color: #0f172a; }
-    h1 { margin: 0 0 6px; }
-    h3 { margin: 0 0 8px; font-size: 16px; }
+    :root {
+      --bg: #edf2f7;
+      --bg-accent: #e2e8f0;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --border: #cbd5e1;
+      --border-strong: #94a3b8;
+      --text: #0f172a;
+      --muted: #475569;
+      --primary: #0f172a;
+      --primary-soft: #334155;
+      --accent: #0f766e;
+      --accent-soft: #d9f3ef;
+      --code-bg: #0b1220;
+      --code-text: #dbeafe;
+      --focus: rgba(15, 118, 110, 0.2);
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: sans-serif;
+      max-width: 900px;
+      margin: 24px auto;
+      padding: 0 16px 24px;
+      background:
+        radial-gradient(circle at top right, rgba(15, 118, 110, 0.08), transparent 32%),
+        radial-gradient(circle at bottom left, rgba(15, 23, 42, 0.06), transparent 28%),
+        linear-gradient(180deg, var(--surface-soft) 0%, var(--bg) 100%);
+      color: var(--text);
+    }
+    h1 { margin: 0 0 6px; letter-spacing: -0.02em; }
+    h3 { margin: 0 0 8px; font-size: 16px; letter-spacing: -0.01em; }
     .grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
     .centered { max-width: 520px; margin: 0 auto; width: 100%; }
-    .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; }
+    .card {
+      background: var(--surface);
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+    }
     .row { margin-bottom: 10px; }
-    input, button { box-sizing: border-box; padding: 8px; margin: 4px 0; width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; }
-    button { cursor: pointer; background: #0f172a; color: #fff; border: 0; }
-    button.secondary { background: #334155; }
+    input, button {
+      width: 100%;
+      padding: 10px 12px;
+      margin: 4px 0;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--text);
+    }
+    input::placeholder { color: #64748b; }
+    input:focus, button:focus {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+    button {
+      cursor: pointer;
+      background: linear-gradient(180deg, var(--primary) 0%, #111827 100%);
+      color: #fff;
+      border-color: transparent;
+      font-weight: 600;
+    }
+    button.secondary {
+      background: linear-gradient(180deg, var(--primary-soft) 0%, #475569 100%);
+    }
+    button.danger {
+      background: linear-gradient(180deg, #b91c1c 0%, #991b1b 100%);
+    }
+    button:hover { border-color: var(--border-strong); }
     table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    th, td { text-align: left; border-bottom: 1px solid #e2e8f0; padding: 6px; vertical-align: top; }
-    pre { background: #0f172a; color: #e2e8f0; padding: 10px; border-radius: 8px; overflow: auto; }
-    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-    .badge { display: inline-block; padding: 4px 8px; border-radius: 999px; font-size: 12px; background: #e2e8f0; }
-    .muted { color: #475569; }
+    th, td {
+      text-align: left;
+      border-bottom: 1px solid rgba(203, 213, 225, 0.9);
+      padding: 8px 6px;
+      vertical-align: top;
+    }
+    th { color: var(--muted); font-weight: 600; }
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 12px;
+      border-radius: 10px;
+      overflow: auto;
+      border: 1px solid rgba(148, 163, 184, 0.24);
+    }
+    a { color: var(--accent); text-decoration-color: rgba(15, 118, 110, 0.35); }
+    a:hover { text-decoration-color: currentColor; }
+    .header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+    .link-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .link-actions button {
+      width: auto;
+      margin: 0;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid rgba(15, 118, 110, 0.18);
+    }
+    .muted { color: var(--muted); }
     .actions a { margin-left: 8px; }
   </style>
 </head>
@@ -492,7 +583,7 @@ const dashboardHTML = `{{define "dashboard"}}<!doctype html>
     <button onclick="loadLinks()">Refresh Links</button>
     <table id="linksTbl">
       <thead>
-        <tr><th>Code</th><th>Long URL</th><th>Active</th><th>Short URL</th><th>Stats</th></tr>
+        <tr><th>Code</th><th>Long URL</th><th>Active</th><th>Short URL</th><th>Actions</th></tr>
       </thead>
       <tbody></tbody>
     </table>
@@ -526,6 +617,16 @@ const dashboardHTML = `{{define "dashboard"}}<!doctype html>
       await call('/api/v1/links','POST',body);
       await loadLinks();
     }
+    async function deleteLink(code) {
+      if (!confirm('Delete link ' + code + '? This will disable the short URL.')) return;
+      const res = await call('/api/v1/links/' + code, 'DELETE', null, true);
+      if (res.status === 204) {
+        if (out) out.textContent = 'Deleted link ' + code;
+        await loadLinks();
+        return;
+      }
+      if (out) out.textContent = res.text || ('Delete failed with status ' + res.status);
+    }
     async function loadLinks() {
       const res = await call('/api/v1/links','GET',null,true);
       const tb = document.querySelector('#linksTbl tbody');
@@ -533,6 +634,7 @@ const dashboardHTML = `{{define "dashboard"}}<!doctype html>
       tb.innerHTML = '';
       if (!res.json || !res.json.items) return;
       for (const l of res.json.items) {
+        if (!l.is_active) continue;
         const tr = document.createElement('tr');
         const shortUrl = location.origin + '/r/' + l.code;
         tr.innerHTML =
@@ -540,7 +642,10 @@ const dashboardHTML = `{{define "dashboard"}}<!doctype html>
           '<td><a href="'+l.long_url+'" target="_blank">'+l.long_url+'</a></td>' +
           '<td>'+String(l.is_active)+'</td>' +
           '<td><a href="'+shortUrl+'" target="_blank">'+shortUrl+'</a></td>' +
-          '<td><button class="secondary" onclick="loadStats(\''+l.code+'\')">Last 7d</button></td>';
+          '<td><div class="link-actions">' +
+            '<button class="secondary" onclick="loadStats(\''+l.code+'\')">Last 7d</button>' +
+            '<button class="danger" onclick="deleteLink(\''+l.code+'\')">Delete</button>' +
+          '</div></td>';
         tb.appendChild(tr);
       }
     }
@@ -569,11 +674,41 @@ const loginHTML = `{{define "login"}}<!doctype html>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>shorte - login</title>
   <style>
-    body { font-family: sans-serif; max-width: 520px; margin: 24px auto; padding: 0 16px; background: #f8fafc; color: #0f172a; }
-    .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; }
-    input, button { padding: 8px; margin: 4px 0; width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; }
-    button { cursor: pointer; background: #0f172a; color: #fff; border: 0; }
-    pre { background: #0f172a; color: #e2e8f0; padding: 10px; border-radius: 8px; overflow: auto; }
+    :root {
+      --bg: #edf2f7;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --border: #cbd5e1;
+      --border-strong: #94a3b8;
+      --text: #0f172a;
+      --muted: #475569;
+      --primary: #0f172a;
+      --primary-soft: #334155;
+      --accent: #0f766e;
+      --accent-soft: #d9f3ef;
+      --code-bg: #0b1220;
+      --code-text: #dbeafe;
+      --focus: rgba(15, 118, 110, 0.2);
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: sans-serif;
+      max-width: 520px;
+      margin: 24px auto;
+      padding: 0 16px 24px;
+      background:
+        radial-gradient(circle at top right, rgba(15, 118, 110, 0.08), transparent 32%),
+        linear-gradient(180deg, var(--surface-soft) 0%, var(--bg) 100%);
+      color: var(--text);
+    }
+    .card { background: var(--surface); border: 1px solid rgba(148, 163, 184, 0.45); border-radius: 14px; padding: 14px; box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06); }
+    input, button { width: 100%; padding: 10px 12px; margin: 4px 0; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--text); }
+    input::placeholder { color: #64748b; }
+    input:focus, button:focus { outline: 2px solid var(--focus); outline-offset: 2px; }
+    button { cursor: pointer; background: linear-gradient(180deg, var(--primary) 0%, #111827 100%); color: #fff; border-color: transparent; font-weight: 600; }
+    button:hover { border-color: var(--border-strong); }
+    pre { background: var(--code-bg); color: var(--code-text); padding: 12px; border-radius: 10px; overflow: auto; border: 1px solid rgba(148, 163, 184, 0.24); }
+    a { color: var(--accent); text-decoration-color: rgba(15, 118, 110, 0.35); }
   </style>
 </head>
 <body>
@@ -614,11 +749,41 @@ const registerHTML = `{{define "register"}}<!doctype html>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>shorte - register</title>
   <style>
-    body { font-family: sans-serif; max-width: 520px; margin: 24px auto; padding: 0 16px; background: #f8fafc; color: #0f172a; }
-    .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; }
-    input, button { padding: 8px; margin: 4px 0; width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; }
-    button { cursor: pointer; background: #0f172a; color: #fff; border: 0; }
-    pre { background: #0f172a; color: #e2e8f0; padding: 10px; border-radius: 8px; overflow: auto; }
+    :root {
+      --bg: #edf2f7;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --border: #cbd5e1;
+      --border-strong: #94a3b8;
+      --text: #0f172a;
+      --muted: #475569;
+      --primary: #0f172a;
+      --primary-soft: #334155;
+      --accent: #0f766e;
+      --accent-soft: #d9f3ef;
+      --code-bg: #0b1220;
+      --code-text: #dbeafe;
+      --focus: rgba(15, 118, 110, 0.2);
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: sans-serif;
+      max-width: 520px;
+      margin: 24px auto;
+      padding: 0 16px 24px;
+      background:
+        radial-gradient(circle at top right, rgba(15, 118, 110, 0.08), transparent 32%),
+        linear-gradient(180deg, var(--surface-soft) 0%, var(--bg) 100%);
+      color: var(--text);
+    }
+    .card { background: var(--surface); border: 1px solid rgba(148, 163, 184, 0.45); border-radius: 14px; padding: 14px; box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06); }
+    input, button { width: 100%; padding: 10px 12px; margin: 4px 0; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--text); }
+    input::placeholder { color: #64748b; }
+    input:focus, button:focus { outline: 2px solid var(--focus); outline-offset: 2px; }
+    button { cursor: pointer; background: linear-gradient(180deg, var(--primary) 0%, #111827 100%); color: #fff; border-color: transparent; font-weight: 600; }
+    button:hover { border-color: var(--border-strong); }
+    pre { background: var(--code-bg); color: var(--code-text); padding: 12px; border-radius: 10px; overflow: auto; border: 1px solid rgba(148, 163, 184, 0.24); }
+    a { color: var(--accent); text-decoration-color: rgba(15, 118, 110, 0.35); }
   </style>
 </head>
 <body>
