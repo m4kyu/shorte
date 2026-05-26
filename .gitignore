@@ -1,0 +1,25 @@
+.env
+.env.*
+!.env.example
+
+# Go build artifacts
+bin/
+*.exe
+*.test
+*.out
+
+# Coverage
+coverage.out
+.coverprofile
+
+# Editor and OS files
+.DS_Store
+.idea/
+.vscode/
+
+# Docker / local runtime data
+pgdata/
+redis-data/
+
+# Logs
+*.log
